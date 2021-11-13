@@ -12,15 +12,17 @@ step_per_epoch, step_per_collect = 10000, 10
 logger = ts.utils.TensorboardLogger(SummaryWriter('log/dqn'))  # TensorBoard is supported!
 # For other loggers: https://tianshou.readthedocs.io/en/master/tutorials/logger.html
 
-HEIGHT = WIDTH = 5
+HEIGHT = 6
+WIDTH = 5
+MAX_STEP = 10
 # you can also try with SubprocVectorEnv
-train_envs = ts.env.DummyVectorEnv([lambda: Env(HEIGHT, WIDTH) for _ in range(train_num)])
-test_envs = ts.env.DummyVectorEnv([lambda: Env(HEIGHT, WIDTH) for _ in range(test_num)])
+train_envs = ts.env.DummyVectorEnv([lambda: Env(HEIGHT, WIDTH, MAX_STEP) for _ in range(train_num)])
+test_envs = ts.env.DummyVectorEnv([lambda: Env(HEIGHT, WIDTH, MAX_STEP) for _ in range(test_num)])
 
 from tianshou.utils.net.common import Net
 # you can define other net by following the API:
 # https://tianshou.readthedocs.io/en/master/tutorials/dqn.html#build-the-network
-env = Env(HEIGHT, WIDTH)
+env = Env(HEIGHT, WIDTH, MAX_STEP)
 state_shape = HEIGHT * WIDTH #env.observation_space.shape or env.observation_space.n
 action_shape = HEIGHT * WIDTH # env.action_space.shape or env.action_space.n
 net = Net(state_shape=state_shape, action_shape=action_shape, hidden_sizes=[128, 128, 128])
