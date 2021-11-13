@@ -12,7 +12,7 @@ step_per_epoch, step_per_collect = 10000, 10
 logger = ts.utils.TensorboardLogger(SummaryWriter('log/dqn'))  # TensorBoard is supported!
 # For other loggers: https://tianshou.readthedocs.io/en/master/tutorials/logger.html
 
-HEIGHT = 6
+HEIGHT = 5
 WIDTH = 5
 MAX_STEP = 10
 # you can also try with SubprocVectorEnv

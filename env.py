@@ -62,7 +62,7 @@ class Env(gym.Env):
         return obs
     
     def step(self, action):
-        x = int(action / self._height)
+        x = int(action / self._width)
         y = int(action % self._width)
         assert 0 <= x < self._height
         assert 0 <= y < self._width
