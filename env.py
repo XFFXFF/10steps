@@ -1,4 +1,5 @@
 from enum import Enum
+import gym
 
 
 class Pointer(Enum):
@@ -13,20 +14,23 @@ def transform(state: Pointer):
     return Pointer(next_state_value)
 
 
-class Env:
+class Env(gym.Env):
 
     def __init__(self, height, width, max_step=10):
+        super().__init__()
         self._height = height
         self._width = width
-        self._max_step = 10
+        self._max_step = max_step
         self._step = 0
+        self._episode_rew = 0
 
         self._grids = [[Pointer.Up for _ in range(width)] for _ in range(height)]
     
     def reset(self):
         self._step = 0
+        self._episode_rew = 0
         self._grids = [[Pointer.Up for _ in range(self._width)] for _ in range(self._height)]
-        return self._digitizing_grids()
+        return self._obs()
     
     def _get_pointed_grid(self, x, y, pointer: Pointer):
         if pointer == Pointer.Up:
@@ -48,12 +52,18 @@ class Env:
             for j in range(self._width):
                 print(self._grids[i][j].value, end=" ")
             print()
+        print(self._episode_rew)
     
-    def _digitizing_grids(self):
-        grids = [[self._grids[i][j].value for j in range(self._width)] for i in range(self._height)]
-        return grids
+    def _obs(self):
+        obs = []
+        for i in range(self._height):
+            for j in range(self._width):
+                obs.append(self._grids[i][j].value)
+        return obs
     
-    def step(self, x, y):
+    def step(self, action):
+        x = int(action / self._height)
+        y = int(action % self._width)
         assert 0 <= x < self._height
         assert 0 <= y < self._width
         state = transform(self._grids[x][y])
@@ -69,6 +79,8 @@ class Env:
         done = False
         if self._step >= self._max_step:
             done = True
-        return self._digitizing_grids(), reward, done, {}
+        self._episode_rew += reward
+        reward = reward / 90
+        return self._obs(), reward, done, {}
 
     
